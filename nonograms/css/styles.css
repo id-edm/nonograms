@@ -1,3 +1,132 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+@font-face {
+  font-family: Jersey;
+  src: url('../assets/fonts/Jersey.ttf');
+}
+
+@font-face {
+  font-family: Playwrite;
+  src: url('../assets/fonts/Playwrite.ttf');
+}
+
+@font-face {
+  font-family: Titillium;
+  src: url('../assets/fonts/Titillium.ttf');
+}
+
+.btn-reset {
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
 body {
-  background-color: aquamarine;
+  background-color: #e6dddd;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Monocraft;
+  user-select: none;
+}
+
+.container__app {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.container__title {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-family: Playwrite;
+  color: #648703;
+  font-size: 55px;
+  text-align: center;
+}
+
+.container__settings {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.container__samples {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.subtitle {
+  font-family: Playwrite;
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.samples {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.lavels {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 220px;
+  padding: 15px 35px;
+  font-family: Titillium;
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: #ffffff;
+  background-color: #000;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px #648703;
+  transition: 0.1s ease;
+  outline: none;
+}
+
+.container__timer {
+  display: flex;
+  justify-content: center;
+}
+
+.timer {
+  font-family: Titillium;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.game__board {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
