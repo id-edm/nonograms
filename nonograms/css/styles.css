@@ -65,6 +65,7 @@ body {
   color: #648703;
   font-size: 55px;
   text-align: center;
+  text-shadow: 0 0 10px rgba(0, 128, 0, 0.4);
 }
 
 .container__settings {
