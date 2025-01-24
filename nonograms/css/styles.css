@@ -41,12 +41,17 @@ body {
   align-items: center;
   font-family: Monocraft;
   user-select: none;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 .container__app {
+  width: 500px;
   display: flex;
   flex-direction: column;
   gap: 15px;
+  position: relative;
+  top: 0;
+  right: 0;
 }
 
 .container__title {
@@ -69,7 +74,8 @@ body {
   gap: 15px;
 }
 
-.container__samples {
+.container__samples,
+.container__levels {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,13 +88,8 @@ body {
   margin-bottom: 15px;
 }
 
-.samples {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-}
-
-.lavels {
+.samples,
+.levels {
   display: flex;
   justify-content: center;
   gap: 5px;

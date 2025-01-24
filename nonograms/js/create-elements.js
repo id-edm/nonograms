@@ -1,6 +1,14 @@
+import { createButtons } from "./create-button.js";
+import { createColorSwitch } from "./create-color-switch.js";
+import { createTimer } from "./create-timer.js";
+import { createGameBoard } from "./create-game-board.js";
+
+
 export function createElements() {
   const containerApp = document.createElement('div');
   containerApp.classList.add('container__app');
+
+  containerApp.appendChild(createColorSwitch());
 
   const containerTitle = document.createElement('div');
   containerTitle.classList.add('container__title');
@@ -28,46 +36,25 @@ export function createElements() {
   samples.classList.add('samples');
   containerSamples.appendChild(samples);
 
-  for (let i = 0; i <= 4; i++) {
-    const sample = document.createElement('button');
-    sample.classList.add('button', 'sample', 'btn-reset');
-    sample.textContent = [i];
-    samples.appendChild(sample);
-  }
-
-  const containerlevels = document.createElement('div');
-  containerlevels.classList.add('container__samples');
-  containerSettings.appendChild(containerlevels);
+  const containerLevels = document.createElement('div');
+  containerLevels.classList.add('container__levels');
+  containerSettings.appendChild(containerLevels);
 
   const titleLevels = document.createElement('h3');
   titleLevels.classList.add('title__level', 'subtitle');
   titleLevels.textContent = 'levels';
-  containerlevels.appendChild(titleLevels);
+  containerLevels.appendChild(titleLevels);
 
   const levels = document.createElement('div');
-  levels.classList.add('lavels');
-  containerlevels.appendChild(levels);
+  levels.classList.add('levels');
+  containerLevels.appendChild(levels);
 
-  const levelNames = ['Easy', 'Medium', 'Hard'];
-  for (let i = 0; i <= 2; i++) {
-    const level = document.createElement('button');
-    level.classList.add('button', 'level', 'btn-reset');
-    level.classList.add(`level-${levelNames[i].toLowerCase()}`);
-    level.textContent = levelNames[i];
-    levels.appendChild(level);
-  }
+  createButtons(samples, levels);
 
-  const containerTimer = document.createElement('div');
-  containerTimer.classList.add('container__timer');
-  containerApp.appendChild(containerTimer);
+  const timer = createTimer();
+  containerApp.appendChild(timer);
 
-  const timer = document.createElement('span');
-  timer.classList.add('timer');
-  timer.textContent = `00 : 00`;
-  containerTimer.appendChild(timer);
-
-  const gameBoard = document.createElement('div');
-  gameBoard.classList.add('game__board');
+  const gameBoard = createGameBoard();
   containerApp.appendChild(gameBoard);
 
   document.body.appendChild(containerApp);

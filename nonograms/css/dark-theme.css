@@ -1,0 +1,10 @@
+.dark-theme {
+  background-color: #363434;
+  color: white;
+}
+
+.button-theme {
+  color: #000000;
+  background-color: #ffffff;
+  box-shadow: 0 4px 648703;
+}
