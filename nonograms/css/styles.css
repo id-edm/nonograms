@@ -96,25 +96,6 @@ body {
   gap: 5px;
 }
 
-.button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: 220px;
-  padding: 15px 35px;
-  font-family: Titillium;
-  font-size: 20px;
-  letter-spacing: 1px;
-  color: #ffffff;
-  background-color: #000;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  box-shadow: 0 4px #648703;
-  transition: 0.1s ease;
-  outline: none;
-}
-
 .container__timer {
   display: flex;
   justify-content: center;
@@ -125,10 +106,4 @@ body {
   font-size: 24px;
   font-weight: bold;
   text-align: center;
-}
-
-.game__board {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

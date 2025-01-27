@@ -1,3 +1,3 @@
-import { createElements } from "./create-elements.js";
+import { createElements } from "./create-game.js";
 
 createElements()

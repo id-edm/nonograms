@@ -1,0 +1,23 @@
+.container__game {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game__board {
+  display: grid;
+  grid-template-columns: repeat(5, 35px);
+  grid-template-rows: repeat(5, 35px);
+  gap: 4px;
+}
+
+.cell {
+  width: 35px;
+  height: 35px;
+  border: 2px solid #648703;
+  background-color: #fff;
+}
+
+.cell.active {
+  background-color: #2f4d6d;
+}
