@@ -1,5 +1,7 @@
 import { createColorSwitch } from "./color-switch.js";
-import { easySampls } from "./level-samples.js";
+import { easySamples } from "./level-samples.js";
+import { mediumSamples } from "./level-samples.js";
+import { hardSamples } from "./level-samples.js";
 
 
 export const createElements = () => {
@@ -47,42 +49,130 @@ export const createElements = () => {
   levels.classList.add('levels');
   containerLevels.appendChild(levels);
 
- const createButtons = () => {
+  const createSamples = () => {
 
-   Object.keys(easySampls).forEach((key) => {
-     const button = document.createElement('button');
-     button.textContent = key;
-     button.classList.add('button', 'sample', 'btn-reset');
-     button.dataset.sampleId = key;
-     samples.appendChild(button);
-   });
+    Object.keys(easySamples).forEach((key) => {
+      const button = document.createElement("button");
+      button.textContent = key;
+      button.classList.add("button", "sample", "btn-reset");
+      button.dataset.sampleId = key;
+      samples.appendChild(button);
+    });
 
-   samples.addEventListener('click', (event) => {
-     const target = event.target;
+    samples.addEventListener("click", (event) => {
+      const target = event.target;
 
-     if (target.classList.contains('sample')) {
-       const buttons = document.querySelectorAll('.sample');
-       buttons.forEach((button) => button.classList.remove('active'));
-       target.classList.add('active');
-       const sampleId = target.dataset.sampleId;
-       const sample = easySampls[sampleId];
-       if (sample) {
-         drawBoard(sample);
-       }
-     }
-   });
+      if (target.classList.contains("sample")) {
+        document.querySelectorAll(".sample").forEach((btn) => btn.classList.remove("active"));
 
-   const levelValues = ['Easy', 'Medium', 'Hard'];
+        target.classList.add("active");
+        const sampleId = target.dataset.sampleId;
+        const sample = easySamples[sampleId];
+
+        if (sample) {
+          drawBoard(sample);
+        }
+      }
+    });
+  };
+
+  const createLevels = () => {
+    const levels = document.querySelector(".levels");
+    const levelValues = ["Easy", "Medium", "Hard"];
+    let currentLevel = "easy";
+    const levelsMap = {
+      easy: easySamples,
+      medium: mediumSamples,
+      hard: hardSamples,
+    };
 
     levelValues.forEach((value) => {
-      const button = document.createElement('button');
+      const button = document.createElement("button");
       button.textContent = value;
-      button.classList.add('button', 'level', 'btn-reset');
+      button.classList.add("button", "level", "btn-reset");
+      button.setAttribute("data-level", value.toLowerCase());
       levels.appendChild(button);
     });
-  }
 
-  createButtons();
+    const firstButton = levels.querySelector(".level");
+    if (firstButton) {
+      firstButton.classList.add("active");
+    }
+
+    levels.addEventListener("click", (event) => {
+      const target = event.target;
+
+      if (target.classList.contains("level")) {
+        document.querySelectorAll(".level").forEach((btn) => btn.classList.remove("active"));
+
+        target.classList.add("active");
+
+        currentLevel = target.dataset.level;
+        console.log(`Выбран уровень: ${currentLevel}`);
+
+        updateSamples(levelsMap[currentLevel]);
+      }
+    });
+
+    const updateSamples = (easySamples) => {
+      const samples = document.querySelector(".samples");
+      const gameContainer = document.querySelector(".game__board");
+      samples.innerHTML = '';
+
+      if (gameContainer) {
+        switch (currentLevel) {
+          case "easy":
+            gameContainer.style.gridTemplateColumns = "repeat(5, 35px)";
+            gameContainer.style.gridTemplateRows = "repeat(5, 35px)";
+            break;
+          case "medium":
+            gameContainer.style.gridTemplateColumns = "repeat(10, 35px)";
+            gameContainer.style.gridTemplateRows = "repeat(10, 35px)";
+            break;
+          case "hard":
+            gameContainer.style.gridTemplateColumns = "repeat(15, 35px)";
+            gameContainer.style.gridTemplateRows = "repeat(15, 35px)";
+            break;
+        }
+      }
+
+      Object.keys(easySamples).forEach((key) => {
+        const button = document.createElement("button");
+        button.textContent = key;
+        button.classList.add("button", "sample", "btn-reset");
+        button.dataset.sampleId = key;
+        samples.appendChild(button);
+      });
+
+      const firstSample = Object.keys(easySamples)[0];
+      if (firstSample) {
+        drawBoard(easySamples[firstSample]);
+      }
+
+      samples.addEventListener("click", (event) => {
+        const target = event.target;
+
+        if (target.classList.contains("sample")) {
+          document.querySelectorAll(".sample").forEach((btn) => btn.classList.remove("active"));
+
+          target.classList.add("active");
+          const sampleId = target.dataset.sampleId;
+          const sample = easySamples[sampleId];
+
+          if (sample) {
+            drawBoard(sample);
+          }
+        }
+      });
+    };
+
+    updateSamples(levelsMap[currentLevel]);
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    createSamples();
+    createLevels();
+  });
 
   const createTimer = () => {
     const containerTimer = document.createElement('div');
@@ -121,7 +211,7 @@ export const createElements = () => {
     }
   }
 
-  drawBoard(easySampls.dog || [[0]]);
+  drawBoard(easySamples.Dog || [[0]]);
 
   document.body.appendChild(containerApp);
 }

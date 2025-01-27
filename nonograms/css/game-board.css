@@ -8,16 +8,18 @@
   display: grid;
   grid-template-columns: repeat(5, 35px);
   grid-template-rows: repeat(5, 35px);
-  gap: 4px;
 }
 
 .cell {
   width: 35px;
   height: 35px;
-  border: 2px solid #648703;
-  background-color: #fff;
+  gap: 1px;
+  border: 0.5px solid #648703;
+  background-color: #ffffff;
 }
 
 .cell.active {
+  width: 35px;
+  height: 35px;
   background-color: #2f4d6d;
 }

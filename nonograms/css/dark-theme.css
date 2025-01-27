@@ -1,15 +1,5 @@
 .dark-theme {
   background-color: #303030;
-  color: #ffffff;
-}
-
-.button-theme {
-  background-color: #5b5b5b;
   color: #000000;
-}
-
-.button-theme.active {
-  background-color: #b9c2cb;
-  box-shadow: 0 2px 5px #648703ad;
-  transform: scale(0.95);
+  filter: invert(1);
 }
