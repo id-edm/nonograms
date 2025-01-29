@@ -150,16 +150,16 @@ export const createElements = () => {
       if (gameContainer) {
         switch (currentLevel) {
           case "easy":
-            gameContainer.style.gridTemplateColumns = "repeat(5, 35px)";
-            gameContainer.style.gridTemplateRows = "repeat(5, 35px)";
+            gameContainer.style.gridTemplateColumns = "repeat(5, 30px)";
+            gameContainer.style.gridTemplateRows = "repeat(5, 30px)";
             break;
           case "medium":
-            gameContainer.style.gridTemplateColumns = "repeat(10, 35px)";
-            gameContainer.style.gridTemplateRows = "repeat(10, 35px)";
+            gameContainer.style.gridTemplateColumns = "repeat(10, 30px)";
+            gameContainer.style.gridTemplateRows = "repeat(10, 30px)";
             break;
           case "hard":
-            gameContainer.style.gridTemplateColumns = "repeat(15, 35px)";
-            gameContainer.style.gridTemplateRows = "repeat(15, 35px)";
+            gameContainer.style.gridTemplateColumns = "repeat(15, 30px)";
+            gameContainer.style.gridTemplateRows = "repeat(15, 30px)";
             break;
         }
       }

@@ -38,7 +38,8 @@ body {
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items:flex-start;
+  padding: 30px;
   font-family: Monocraft;
   user-select: none;
   transition: background-color 0.5s ease, color 0.5s ease;
@@ -47,7 +48,7 @@ body {
 .container__app {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
   position: relative;
   top: 0;
   right: 0;
@@ -62,7 +63,7 @@ body {
 .title {
   font-family: Playwrite;
   color: #648703;
-  font-size: 55px;
+  font-size: 40px;
   text-align: center;
   text-shadow: 0 0 10px rgba(0, 128, 0, 0.4);
 }
@@ -84,7 +85,7 @@ body {
 
 .subtitle {
   font-family: Playwrite;
-  font-size: 24px;
+  font-size: 18px;
   margin-bottom: 15px;
 }
 
@@ -102,7 +103,7 @@ body {
 
 .timer {
   font-family: Titillium;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: bold;
   text-align: center;
 }

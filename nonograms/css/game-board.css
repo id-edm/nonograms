@@ -6,8 +6,8 @@
 
 .game__board {
   display: grid;
-  grid-template-columns: repeat(5, 35px);
-  grid-template-rows: repeat(5, 35px);
+  /* grid-template-columns: repeat(5, 35px);
+  grid-template-rows: repeat(5, 35px); */
   order: 1;
 }
 
