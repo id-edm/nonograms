@@ -26,12 +26,10 @@
 .active {
   background-color: #82a0bc;
   color: #e6e4e4;
-  box-shadow: 0 2px 5px #648703ad;
   transform: scale(0.95);
 }
 
 @media (hover: hover) and (pointer: fine) {
-
   .button:hover {
     background-color: #c0930c;
     color: #000000;

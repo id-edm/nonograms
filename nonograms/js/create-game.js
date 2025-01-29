@@ -49,6 +49,34 @@ export const createElements = () => {
   levels.classList.add('levels');
   containerLevels.appendChild(levels);
 
+  const containerTimer = document.createElement('div');
+  containerTimer.classList.add('container__timer');
+  containerApp.appendChild(containerTimer);
+
+  const gameContainer = document.createElement('div');
+  gameContainer.classList.add('container__game');
+  containerApp.appendChild(gameContainer);
+
+  const wrapperGameBoardLeft = document.createElement('div');
+  wrapperGameBoardLeft.classList.add('wrapper__hints-left');
+  gameContainer.appendChild(wrapperGameBoardLeft);
+
+  const wrapperGameBoardRight = document.createElement('div');
+  wrapperGameBoardRight.classList.add('wrapper__hints-right');
+  gameContainer.appendChild(wrapperGameBoardRight);
+
+  const gameBoard = document.createElement('div');
+  gameBoard.classList.add('game__board');
+  wrapperGameBoardRight.appendChild(gameBoard);
+
+  const leftHints = document.createElement('div');
+  leftHints.classList.add('hints', 'hints-left');
+  wrapperGameBoardLeft.appendChild(leftHints);
+
+  const topHints = document.createElement('div');
+  topHints.classList.add('hints', 'hints-top');
+  wrapperGameBoardRight.appendChild(topHints);
+
   const createSamples = () => {
 
     Object.keys(easySamples).forEach((key) => {
@@ -146,7 +174,9 @@ export const createElements = () => {
 
       const firstSample = Object.keys(easySamples)[0];
       if (firstSample) {
-        drawBoard(easySamples[firstSample]);
+        const sample = easySamples[firstSample];
+        drawBoard(sample);
+        drawHints(sample);
       }
 
       samples.addEventListener("click", (event) => {
@@ -161,6 +191,7 @@ export const createElements = () => {
 
           if (sample) {
             drawBoard(sample);
+            drawHints(sample);
           }
         }
       });
@@ -175,10 +206,6 @@ export const createElements = () => {
   });
 
   const createTimer = () => {
-    const containerTimer = document.createElement('div');
-    containerTimer.classList.add('container__timer');
-    containerApp.appendChild(containerTimer);
-
     const timer = document.createElement('span');
     timer.classList.add('timer');
     timer.textContent = '00 : 00';
@@ -188,30 +215,72 @@ export const createElements = () => {
 
   createTimer()
 
-  // игровое поле
-  const gameContainer = document.createElement('div');
-  gameContainer.classList.add('container__game');
-  containerApp.appendChild(gameContainer);
-
-  const gameBoard = document.createElement('div');
-  gameBoard.classList.add('game__board');
-  gameContainer.appendChild(gameBoard);
-
   const drawBoard = (board) => {
     gameBoard.innerHTML = '';
-    for (let row = 0; row < board.length; row++) {
-      for (let col = 0; col < board[row].length; col++) {
+    const gridSize = board.length;
+
+    for (let row = 0; row < gridSize; row++) {
+      for (let col = 0; col < gridSize; col++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
         if (board[row][col] === 1) {
-          cell.classList.add('active');
+          cell.classList.add('color-cell');
         }
+        if ((col + 1) % 5 === 0 && col !== gridSize - 1) {
+          cell.classList.add('border-right');
+        }
+        if ((row + 1) % 5 === 0 && row !== gridSize - 1) {
+          cell.classList.add('border-bottom');
+        }
+
         gameBoard.appendChild(cell);
       }
     }
-  }
+  };
 
-  drawBoard(easySamples.Dog || [[0]]);
+  drawBoard(easySamples.Dog);
+
+  const drawHints = (board) => {
+    leftHints.innerHTML = '';
+    topHints.innerHTML = '';
+
+    board.forEach((row, rowIndex) => {
+      const hintRow = document.createElement('div');
+      hintRow.classList.add('hint-row');
+      if ((rowIndex + 1) % 5 === 0 && rowIndex !== board.length - 1) {
+        hintRow.classList.add('border-bottom');
+      }
+
+      const hintTextRow = row.join('').match(/1+/g)?.map((s) => s.length) || [0];
+
+      hintTextRow.forEach(length => {
+        const hintDiv = document.createElement('div');
+        hintDiv.classList.add('hint-cell');
+        hintDiv.textContent = length;
+        hintRow.appendChild(hintDiv);
+      });
+
+      leftHints.appendChild(hintRow);
+    });
+
+    for (let col = 0; col < board[0].length; col++) {
+      const colCells = board.map((row) => row[col]);
+      const hintCol = document.createElement('div');
+      hintCol.classList.add('hint-col');
+
+      const hintTextCol = colCells.join('').match(/1+/g)?.map((s) => s.length) || [0];
+
+      hintTextCol.forEach(length => {
+        const hintDiv = document.createElement('div');
+        hintDiv.classList.add('hint-cell');
+        hintDiv.textContent = length;
+        hintCol.appendChild(hintDiv);
+      });
+
+      topHints.appendChild(hintCol);
+    }
+  };
+
 
   document.body.appendChild(containerApp);
 }

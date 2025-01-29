@@ -1,6 +1,7 @@
 @import url('./modern-normalize.css');
 @import url('./styles.css');
 @import url('./buttons.css');
+@import url('./hints-game.css');
 @import url('./color-switch.css');
 @import url('./dark-theme.css');
 @import url('./game-board.css');
