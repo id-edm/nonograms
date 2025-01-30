@@ -1,7 +1,5 @@
-import { createColorSwitch } from "./color-switch.js";
-import { easySamples } from "./level-samples.js";
-import { mediumSamples } from "./level-samples.js";
-import { hardSamples } from "./level-samples.js";
+import { createColorSwitch } from './color-switch.js';
+import { nanogramsSamples } from './level-samples.js';
 
 
 export const createElements = () => {
@@ -16,7 +14,7 @@ export const createElements = () => {
 
   const title = document.createElement('h1');
   title.classList.add('title');
-  title.textContent = 'Nonograms!';
+  title.textContent = 'Nanograms!';
   containerTitle.appendChild(title);
 
   const containerSettings = document.createElement('div');
@@ -77,117 +75,103 @@ export const createElements = () => {
   topHints.classList.add('hints', 'hints-top');
   wrapperGameBoardRight.appendChild(topHints);
 
-  const createSamples = () => {
+  const containerBtn = document.createElement('div');
+  containerBtn.classList.add('container__btn');
+  containerApp.appendChild(containerBtn);
 
-    Object.keys(easySamples).forEach((key) => {
-      const button = document.createElement("button");
-      button.textContent = key;
-      button.classList.add("button", "sample", "btn-reset");
-      button.dataset.sampleId = key;
-      samples.appendChild(button);
-    });
+  const showSamplesBtn = document.createElement('button');
+  showSamplesBtn.classList.add('show__samples-btn');
+  showSamplesBtn.textContent = 'Show';
+  containerBtn.appendChild(showSamplesBtn);
 
-    samples.addEventListener("click", (event) => {
-      const target = event.target;
+  document.body.appendChild(containerApp);
 
-      if (target.classList.contains("sample")) {
-        document.querySelectorAll(".sample").forEach((btn) => btn.classList.remove("active"));
-
-        target.classList.add("active");
-        const sampleId = target.dataset.sampleId;
-        const sample = easySamples[sampleId];
-
-        if (sample) {
-          drawBoard(sample);
-        }
-      }
-    });
-  };
-
-  const createLevels = () => {
-    const levels = document.querySelector(".levels");
-    const levelValues = ["Easy", "Medium", "Hard"];
-    let currentLevel = "easy";
+  const createLevelInterface = () => {
+    const levels = document.querySelector('.levels');
+    const levelValues = ['Easy', 'Medium', 'Hard'];
+    let currentLevel = 'easy';
     const levelsMap = {
-      easy: easySamples,
-      medium: mediumSamples,
-      hard: hardSamples,
+      easy: nanogramsSamples.easy,
+      medium: nanogramsSamples.medium,
+      hard: nanogramsSamples.hard,
     };
 
     levelValues.forEach((value) => {
-      const button = document.createElement("button");
-      button.textContent = value;
-      button.classList.add("button", "level", "btn-reset");
-      button.setAttribute("data-level", value.toLowerCase());
+      const button = document.createElement('button');
+      button.textContent = value.toLocaleUpperCase();
+      button.classList.add('button', 'level', 'btn-reset');
+      button.setAttribute('data-level', value.toLowerCase());
       levels.appendChild(button);
     });
 
-    const firstButton = levels.querySelector(".level");
+    const firstButton = levels.querySelector('.level');
     if (firstButton) {
-      firstButton.classList.add("active");
+      firstButton.classList.add('active');
     }
 
-    levels.addEventListener("click", (event) => {
+    levels.addEventListener('click', (event) => {
       const target = event.target;
 
-      if (target.classList.contains("level")) {
-        document.querySelectorAll(".level").forEach((btn) => btn.classList.remove("active"));
+      if (target.classList.contains('level')) {
+        document.querySelectorAll('.level').forEach((btn) => btn.classList.remove('active'));
 
-        target.classList.add("active");
-
+        target.classList.add('active');
         currentLevel = target.dataset.level;
-        console.log(`Выбран уровень: ${currentLevel}`);
 
         updateSamples(levelsMap[currentLevel]);
       }
     });
 
-    const updateSamples = (easySamples) => {
-      const samples = document.querySelector(".samples");
-      const gameContainer = document.querySelector(".game__board");
+    const updateSamples = (nanogramsSamples) => {
+      const samples = document.querySelector('.samples');
+      const gameContainer = document.querySelector('.game__board');
       samples.innerHTML = '';
 
       if (gameContainer) {
         switch (currentLevel) {
-          case "easy":
-            gameContainer.style.gridTemplateColumns = "repeat(5, 30px)";
-            gameContainer.style.gridTemplateRows = "repeat(5, 30px)";
+          case 'easy':
+            gameContainer.style.gridTemplateColumns = 'repeat(5, 30px)';
+            gameContainer.style.gridTemplateRows = 'repeat(5, 30px)';
             break;
-          case "medium":
-            gameContainer.style.gridTemplateColumns = "repeat(10, 30px)";
-            gameContainer.style.gridTemplateRows = "repeat(10, 30px)";
+          case 'medium':
+            gameContainer.style.gridTemplateColumns = 'repeat(10, 30px)';
+            gameContainer.style.gridTemplateRows = 'repeat(10, 30px)';
             break;
-          case "hard":
-            gameContainer.style.gridTemplateColumns = "repeat(15, 30px)";
-            gameContainer.style.gridTemplateRows = "repeat(15, 30px)";
+          case 'hard':
+            gameContainer.style.gridTemplateColumns = 'repeat(15, 30px)';
+            gameContainer.style.gridTemplateRows = 'repeat(15, 30px)';
             break;
         }
       }
 
-      Object.keys(easySamples).forEach((key) => {
-        const button = document.createElement("button");
-        button.textContent = key;
-        button.classList.add("button", "sample", "btn-reset");
-        button.dataset.sampleId = key;
+      Object.keys(nanogramsSamples).forEach((value, index) => {
+        const button = document.createElement('button');
+        button.textContent = value.toLocaleUpperCase();
+        button.classList.add('button', 'sample', 'btn-reset');
+        button.dataset.sampleId = value;
         samples.appendChild(button);
+        if (index === 0) {
+          button.classList.add('active');
+        }
       });
 
-      const firstSample = Object.keys(easySamples)[0];
-      if (firstSample) {
-        const sample = easySamples[firstSample];
-        drawBoard(sample);
-        drawHints(sample);
-      }
+				const firstSample = Object.keys(nanogramsSamples)[0];
 
-      samples.addEventListener("click", (event) => {
+				if (firstSample) {
+					const sample = nanogramsSamples[firstSample];
+					drawBoard(sample);
+					drawHints(sample);
+				}
+
+      samples.addEventListener('click', (event) => {
         const target = event.target;
 
-        if (target.classList.contains("sample")) {
-          document.querySelectorAll(".sample").forEach((btn) => btn.classList.remove("active"));
+        if (target.classList.contains('sample')) {
+          document.querySelectorAll('.sample').forEach((btn) => btn.classList.remove('active'));
 
-          target.classList.add("active");
+          target.classList.add('active');
           const sampleId = target.dataset.sampleId;
-          const sample = easySamples[sampleId];
+          const sample = nanogramsSamples[sampleId];
 
           if (sample) {
             drawBoard(sample);
@@ -200,9 +184,8 @@ export const createElements = () => {
     updateSamples(levelsMap[currentLevel]);
   };
 
-  document.addEventListener("DOMContentLoaded", () => {
-    createSamples();
-    createLevels();
+  document.addEventListener('DOMContentLoaded', () => {
+    createLevelInterface();
   });
 
   const createTimer = () => {
@@ -214,31 +197,6 @@ export const createElements = () => {
   }
 
   createTimer()
-
-  const drawBoard = (board) => {
-    gameBoard.innerHTML = '';
-    const gridSize = board.length;
-
-    for (let row = 0; row < gridSize; row++) {
-      for (let col = 0; col < gridSize; col++) {
-        const cell = document.createElement('div');
-        cell.classList.add('cell');
-        if (board[row][col] === 1) {
-          cell.classList.add('color-cell');
-        }
-        if ((col + 1) % 5 === 0 && col !== gridSize - 1) {
-          cell.classList.add('border-right');
-        }
-        if ((row + 1) % 5 === 0 && row !== gridSize - 1) {
-          cell.classList.add('border-bottom');
-        }
-
-        gameBoard.appendChild(cell);
-      }
-    }
-  };
-
-  drawBoard(easySamples.Dog);
 
   const drawHints = (board) => {
     leftHints.innerHTML = '';
@@ -281,7 +239,59 @@ export const createElements = () => {
     }
   };
 
+  const colorCells = (board) => {
+    const cells = document.querySelectorAll('.cell');
+    
+    cells.forEach((cell, index) => {
+      const row = Math.floor(index / board.length);
+      const col = index % board.length;
+  
+      if (board[row] && board[row][col] === 1) {
+        cell.classList.add('color-cell');
+      } else {
+        cell.classList.remove('color-cell');
+      }
+    });
+  };
+  
+  const drawBoard = (board) => {
+    gameBoard.innerHTML = '';
+    const gridSize = board.length;
+  
+    console.log(`Drawing board with size: ${gridSize}`);
+  
+    for (let row = 0; row < gridSize; row++) {
+      for (let col = 0; col < gridSize; col++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        
+        if ((col + 1) % 5 === 0 && col !== gridSize - 1) {
+          cell.classList.add('border-right');
+        }
+        if ((row + 1) % 5 === 0 && row !== gridSize - 1) {
+          cell.classList.add('border-bottom');
+        }
+  
+        gameBoard.appendChild(cell);
+      }
+    }
+  };
+  
+  const showSampleBtn = document.querySelector('.show__samples-btn')
 
-  document.body.appendChild(containerApp);
-}
-
+	if (showSampleBtn) {
+		showSampleBtn.addEventListener('click', () => {
+			const selectedLevel = document.querySelector('.level.active')?.dataset.level
+			const selectedSample = document.querySelector('.sample.active')
+			if (selectedSample) {
+				const sampleId = selectedSample.dataset.sampleId
+				const sample = nanogramsSamples[selectedLevel]?.[sampleId]
+				if (!sample) {
+					return
+				}
+				colorCells(sample)
+			}
+		})
+	}
+ 
+}  
