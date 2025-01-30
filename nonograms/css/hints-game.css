@@ -39,8 +39,33 @@
   width: 30px;
   height: 30px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+}
+
+.hard-hints .hint-cell {
+  width: 20px;
+  height: 20px;
+  font-size: 8px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.medium-hints .hint-cell {
+  width: 25px;
+  height: 25px;
+  font-size: 12px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hint-row, .hint-col {
+  display: flex;
+  gap: 2px;
 }
 
 .hint-row {

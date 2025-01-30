@@ -134,12 +134,12 @@ export const createElements = () => {
             gameContainer.style.gridTemplateRows = 'repeat(5, 30px)';
             break;
           case 'medium':
-            gameContainer.style.gridTemplateColumns = 'repeat(10, 30px)';
-            gameContainer.style.gridTemplateRows = 'repeat(10, 30px)';
+            gameContainer.style.gridTemplateColumns = 'repeat(10, 25px)';
+            gameContainer.style.gridTemplateRows = 'repeat(10, 25px)';
             break;
           case 'hard':
-            gameContainer.style.gridTemplateColumns = 'repeat(15, 30px)';
-            gameContainer.style.gridTemplateRows = 'repeat(15, 30px)';
+            gameContainer.style.gridTemplateColumns = 'repeat(15, 20px)';
+            gameContainer.style.gridTemplateRows = 'repeat(15, 20px)';
             break;
         }
       }
@@ -198,46 +198,75 @@ export const createElements = () => {
 
   createTimer()
 
-  const drawHints = (board) => {
-    leftHints.innerHTML = '';
-    topHints.innerHTML = '';
+  const drawHints = board => {
+		leftHints.innerHTML = ''
+		topHints.innerHTML = ''
 
-    board.forEach((row, rowIndex) => {
-      const hintRow = document.createElement('div');
-      hintRow.classList.add('hint-row');
-      if ((rowIndex + 1) % 5 === 0 && rowIndex !== board.length - 1) {
-        hintRow.classList.add('border-bottom');
-      }
+		board.forEach((row, rowIndex) => {
+			const hintRow = document.createElement('div')
+			hintRow.classList.add('hint-row')
+			if ((rowIndex + 1) % 5 === 0 && rowIndex !== board.length - 1) {
+				hintRow.classList.add('border-bottom')
+			}
 
-      const hintTextRow = row.join('').match(/1+/g)?.map((s) => s.length) || [0];
+			const hintTextRow =
+				row
+					.join('')
+					.match(/1+/g)
+					?.map(s => s.length) || []
+			if (hintTextRow.length === 0) hintTextRow.push(0)
 
-      hintTextRow.forEach(length => {
-        const hintDiv = document.createElement('div');
-        hintDiv.classList.add('hint-cell');
-        hintDiv.textContent = length;
-        hintRow.appendChild(hintDiv);
-      });
+			hintTextRow.forEach(length => {
+				const hintDiv = document.createElement('div')
+				hintDiv.classList.add('hint-cell')
+				hintDiv.textContent = length
+				hintRow.appendChild(hintDiv)
+			})
 
-      leftHints.appendChild(hintRow);
-    });
+			leftHints.appendChild(hintRow)
+		})
 
-    for (let col = 0; col < board[0].length; col++) {
-      const colCells = board.map((row) => row[col]);
-      const hintCol = document.createElement('div');
-      hintCol.classList.add('hint-col');
+		for (let col = 0; col < board[0].length; col++) {
+			const colCells = board.map(row => row[col])
+			const hintCol = document.createElement('div')
+			hintCol.classList.add('hint-col')
 
-      const hintTextCol = colCells.join('').match(/1+/g)?.map((s) => s.length) || [0];
+			const hintTextCol =
+				colCells
+					.join('')
+					.match(/1+/g)
+					?.map(s => s.length) || []
+			if (hintTextCol.length === 0) hintTextCol.push(0)
 
-      hintTextCol.forEach(length => {
-        const hintDiv = document.createElement('div');
-        hintDiv.classList.add('hint-cell');
-        hintDiv.textContent = length;
-        hintCol.appendChild(hintDiv);
-      });
+			hintTextCol.forEach(length => {
+				const hintDiv = document.createElement('div')
+				hintDiv.classList.add('hint-cell')
+				hintDiv.textContent = length
+				hintCol.appendChild(hintDiv)
+			})
 
-      topHints.appendChild(hintCol);
-    }
-  };
+			topHints.appendChild(hintCol)
+		}
+
+		applyDynamicClasses(board)
+	}
+
+	const applyDynamicClasses = board => {
+		let sizeClass = null
+		if (board.length === 5) {
+			sizeClass = 'easy-hints'
+		} else if (board.length === 10) {
+			sizeClass = 'medium-hints'
+		} else if (board.length === 15) {
+			sizeClass = 'hard-hints'
+		}
+
+		leftHints.classList.remove('hard-hints', 'medium-hints')
+		topHints.classList.remove('hard-hints', 'medium-hints')
+
+		leftHints.classList.add(sizeClass)
+		topHints.classList.add(sizeClass)
+	}
 
   const colorCells = (board) => {
     const cells = document.querySelectorAll('.cell');
