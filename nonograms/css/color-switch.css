@@ -1,7 +1,6 @@
 .color-switch {
   position: relative;
   display: inline-block;
-  left: 100%;
   width: 40px;
   height: 20px;
 }

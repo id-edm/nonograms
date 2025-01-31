@@ -6,8 +6,6 @@ export const createElements = () => {
   const containerApp = document.createElement('div');
   containerApp.classList.add('container__app');
 
-  containerApp.appendChild(createColorSwitch());
-
   const containerTitle = document.createElement('div');
   containerTitle.classList.add('container__title');
   containerApp.appendChild(containerTitle);
@@ -16,6 +14,12 @@ export const createElements = () => {
   title.classList.add('title');
   title.textContent = 'Nanograms!';
   containerTitle.appendChild(title);
+
+  const uiSettings = document.createElement('div');
+  uiSettings.classList.add('ui__settings');
+  containerApp.appendChild(uiSettings);
+
+  uiSettings.appendChild(createColorSwitch());
 
   const containerSettings = document.createElement('div');
   containerSettings.classList.add('container__settings');
@@ -75,14 +79,9 @@ export const createElements = () => {
   topHints.classList.add('hints', 'hints-top');
   wrapperGameBoardRight.appendChild(topHints);
 
-  const containerBtn = document.createElement('div');
-  containerBtn.classList.add('container__btn');
-  containerApp.appendChild(containerBtn);
-
-  const showSamplesBtn = document.createElement('button');
-  showSamplesBtn.classList.add('show__samples-btn');
-  showSamplesBtn.textContent = 'Show';
-  containerBtn.appendChild(showSamplesBtn);
+  const containerControl = document.createElement('div');
+  containerControl.classList.add('container__control');
+  containerApp.appendChild(containerControl);
 
   document.body.appendChild(containerApp);
 
@@ -103,6 +102,33 @@ export const createElements = () => {
       button.setAttribute('data-level', value.toLowerCase());
       levels.appendChild(button);
     });
+
+    const userBtn = document.querySelector('.container__control');
+    const btnValues = ['Save game', 'Solutions', 'Reset game', 'Continue last game'];
+
+    btnValues.forEach((value) => {
+      const button = document.createElement('button');
+      button.textContent = value.toLocaleUpperCase();
+      const uniqueClass = value.toLowerCase().replace(/\s+/g, '-');
+      button.classList.add('button', 'btn-reset', uniqueClass);
+      userBtn.appendChild(button);
+    });
+
+    const showSampleBtn = document.querySelector('.solutions')
+    if (showSampleBtn) {
+      showSampleBtn.addEventListener('click', () => {
+        const selectedLevel = document.querySelector('.level.active')?.dataset.level
+        const selectedSample = document.querySelector('.sample.active')
+        if (selectedSample) {
+          const sampleId = selectedSample.dataset.sampleId
+          const sample = nanogramsSamples[selectedLevel]?.[sampleId]
+          if (!sample) {
+            return
+          }
+          colorCells(sample)
+        }
+      })
+    }
 
     const firstButton = levels.querySelector('.level');
     if (firstButton) {
@@ -155,13 +181,13 @@ export const createElements = () => {
         }
       });
 
-				const firstSample = Object.keys(nanogramsSamples)[0];
+      const firstSample = Object.keys(nanogramsSamples)[0];
 
-				if (firstSample) {
-					const sample = nanogramsSamples[firstSample];
-					drawBoard(sample);
-					drawHints(sample);
-				}
+      if (firstSample) {
+        const sample = nanogramsSamples[firstSample];
+        drawBoard(sample);
+        drawHints(sample);
+      }
 
       samples.addEventListener('click', (event) => {
         const target = event.target;
@@ -199,82 +225,82 @@ export const createElements = () => {
   createTimer()
 
   const drawHints = board => {
-		leftHints.innerHTML = ''
-		topHints.innerHTML = ''
+    leftHints.innerHTML = ''
+    topHints.innerHTML = ''
 
-		board.forEach((row, rowIndex) => {
-			const hintRow = document.createElement('div')
-			hintRow.classList.add('hint-row')
-			if ((rowIndex + 1) % 5 === 0 && rowIndex !== board.length - 1) {
-				hintRow.classList.add('border-bottom')
-			}
+    board.forEach((row, rowIndex) => {
+      const hintRow = document.createElement('div')
+      hintRow.classList.add('hint-row')
+      if ((rowIndex + 1) % 5 === 0 && rowIndex !== board.length - 1) {
+        hintRow.classList.add('border-bottom')
+      }
 
-			const hintTextRow =
-				row
-					.join('')
-					.match(/1+/g)
-					?.map(s => s.length) || []
-			if (hintTextRow.length === 0) hintTextRow.push(0)
+      const hintTextRow =
+        row
+          .join('')
+          .match(/1+/g)
+          ?.map(s => s.length) || []
+      if (hintTextRow.length === 0) hintTextRow.push(0)
 
-			hintTextRow.forEach(length => {
-				const hintDiv = document.createElement('div')
-				hintDiv.classList.add('hint-cell')
-				hintDiv.textContent = length
-				hintRow.appendChild(hintDiv)
-			})
+      hintTextRow.forEach(length => {
+        const hintDiv = document.createElement('div')
+        hintDiv.classList.add('hint-cell')
+        hintDiv.textContent = length
+        hintRow.appendChild(hintDiv)
+      })
 
-			leftHints.appendChild(hintRow)
-		})
+      leftHints.appendChild(hintRow)
+    })
 
-		for (let col = 0; col < board[0].length; col++) {
-			const colCells = board.map(row => row[col])
-			const hintCol = document.createElement('div')
-			hintCol.classList.add('hint-col')
+    for (let col = 0; col < board[0].length; col++) {
+      const colCells = board.map(row => row[col])
+      const hintCol = document.createElement('div')
+      hintCol.classList.add('hint-col')
 
-			const hintTextCol =
-				colCells
-					.join('')
-					.match(/1+/g)
-					?.map(s => s.length) || []
-			if (hintTextCol.length === 0) hintTextCol.push(0)
+      const hintTextCol =
+        colCells
+          .join('')
+          .match(/1+/g)
+          ?.map(s => s.length) || []
+      if (hintTextCol.length === 0) hintTextCol.push(0)
 
-			hintTextCol.forEach(length => {
-				const hintDiv = document.createElement('div')
-				hintDiv.classList.add('hint-cell')
-				hintDiv.textContent = length
-				hintCol.appendChild(hintDiv)
-			})
+      hintTextCol.forEach(length => {
+        const hintDiv = document.createElement('div')
+        hintDiv.classList.add('hint-cell')
+        hintDiv.textContent = length
+        hintCol.appendChild(hintDiv)
+      })
 
-			topHints.appendChild(hintCol)
-		}
+      topHints.appendChild(hintCol)
+    }
 
-		applyDynamicClasses(board)
-	}
+    applyDynamicClasses(board)
+  }
 
-	const applyDynamicClasses = board => {
-		let sizeClass = null
-		if (board.length === 5) {
-			sizeClass = 'easy-hints'
-		} else if (board.length === 10) {
-			sizeClass = 'medium-hints'
-		} else if (board.length === 15) {
-			sizeClass = 'hard-hints'
-		}
+  const applyDynamicClasses = board => {
+    let sizeClass = null
+    if (board.length === 5) {
+      sizeClass = 'easy-hints'
+    } else if (board.length === 10) {
+      sizeClass = 'medium-hints'
+    } else if (board.length === 15) {
+      sizeClass = 'hard-hints'
+    }
 
-		leftHints.classList.remove('hard-hints', 'medium-hints')
-		topHints.classList.remove('hard-hints', 'medium-hints')
+    leftHints.classList.remove('hard-hints', 'medium-hints')
+    topHints.classList.remove('hard-hints', 'medium-hints')
 
-		leftHints.classList.add(sizeClass)
-		topHints.classList.add(sizeClass)
-	}
+    leftHints.classList.add(sizeClass)
+    topHints.classList.add(sizeClass)
+  }
 
   const colorCells = (board) => {
     const cells = document.querySelectorAll('.cell');
-    
+
     cells.forEach((cell, index) => {
       const row = Math.floor(index / board.length);
       const col = index % board.length;
-  
+
       if (board[row] && board[row][col] === 1) {
         cell.classList.add('color-cell');
       } else {
@@ -282,45 +308,27 @@ export const createElements = () => {
       }
     });
   };
-  
+
   const drawBoard = (board) => {
     gameBoard.innerHTML = '';
     const gridSize = board.length;
-  
+
     console.log(`Drawing board with size: ${gridSize}`);
-  
+
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
-        
+
         if ((col + 1) % 5 === 0 && col !== gridSize - 1) {
           cell.classList.add('border-right');
         }
         if ((row + 1) % 5 === 0 && row !== gridSize - 1) {
           cell.classList.add('border-bottom');
         }
-  
+
         gameBoard.appendChild(cell);
       }
     }
   };
-  
-  const showSampleBtn = document.querySelector('.show__samples-btn')
-
-	if (showSampleBtn) {
-		showSampleBtn.addEventListener('click', () => {
-			const selectedLevel = document.querySelector('.level.active')?.dataset.level
-			const selectedSample = document.querySelector('.sample.active')
-			if (selectedSample) {
-				const sampleId = selectedSample.dataset.sampleId
-				const sample = nanogramsSamples[selectedLevel]?.[sampleId]
-				if (!sample) {
-					return
-				}
-				colorCells(sample)
-			}
-		})
-	}
- 
-}  
+}

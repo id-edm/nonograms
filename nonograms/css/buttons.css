@@ -5,7 +5,7 @@
   max-width: 220px;
   padding: 5px 10px;
   font-family: Titillium;
-  font-size: 16px;
+  font-size: 14px;
   letter-spacing: 1px;
   color: #ffffff;
   background-color: #2f4d6d;
@@ -27,6 +27,11 @@
   background-color: #82a0bc;
   color: #e6e4e4;
   transform: scale(0.95);
+}
+
+.container__control{
+  display: flex;
+  gap: 5px;
 }
 
 @media (hover: hover) and (pointer: fine) {
