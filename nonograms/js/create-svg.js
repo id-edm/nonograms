@@ -104,3 +104,27 @@ export const createSvgBestGame = () => {
 
 	return svg
 }
+
+export const createSvgCross = () => {
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+
+  svg.setAttribute("width", "20");
+  svg.setAttribute("height", "20");
+  svg.setAttribute("viewBox", "0 0 512 512");
+
+
+  const path1 = document.createElementNS(svgNS, "path");
+  path1.setAttribute("d", "M25 512a25 25 0 0 1-17.68-42.68l462-462a25 25 0 0 1 35.36 35.36l-462 462A24.93 24.93 0 0 1 25 512z");
+  path1.setAttribute("fill", "#000000");
+
+  const path2 = document.createElementNS(svgNS, "path");
+  path2.setAttribute("d", "M487 512a24.93 24.93 0 0 1-17.68-7.32l-462-462A25 25 0 0 1 42.68 7.32l462 462A25 25 0 0 1 487 512z");
+  path2.setAttribute("fill", "#000000");
+
+  svg.appendChild(path1);
+  svg.appendChild(path2);
+
+  return svg;
+};
+

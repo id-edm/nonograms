@@ -1,6 +1,10 @@
 import { createColorSwitch } from './color-switch.js';
 import { createSvgSound } from './create-svg.js';
 import { createSvgBestGame } from './create-svg.js';
+import { checkWin } from './win-game.js';
+import { handleRightClick } from './click-right.js';
+import { clearCrosses } from './clear-crosses.js';
+import { createTimer, startTimer } from './create-timer.js';
 import { nanogramsSamples } from './level-samples.js';
 
 
@@ -119,21 +123,32 @@ export const createElements = () => {
       userBtn.appendChild(button);
     });
 
-    const showSampleBtn = document.querySelector('.solutions')
-    if (showSampleBtn) {
-      showSampleBtn.addEventListener('click', () => {
-        const selectedLevel = document.querySelector('.level.active')?.dataset.level
-        const selectedSample = document.querySelector('.sample.active')
-        if (selectedSample) {
-          const sampleId = selectedSample.dataset.sampleId
-          const sample = nanogramsSamples[selectedLevel]?.[sampleId]
-          if (!sample) {
-            return
-          }
-          colorCells(sample)
-        }
-      })
-    }
+    const showSampleBtn = document.querySelector(".solutions")
+		if (showSampleBtn) {
+			showSampleBtn.addEventListener("click", () => {
+				const cells = document.querySelectorAll(".cell")
+
+				cells.forEach(cell => {
+					cell.style.backgroundColor = "white"
+					cell.style.boxShadow = "none"
+				})
+
+        clearCrosses();
+
+				const selectedLevel =
+					document.querySelector(".level.active")?.dataset.level
+				const selectedSample = document.querySelector(".sample.active")
+				if (selectedSample) {
+					const sampleId = selectedSample.dataset.sampleId
+					const sample = nanogramsSamples[selectedLevel]?.[sampleId]
+					if (!sample) {
+						return
+					}
+
+					colorCells(sample)
+				}
+			})
+		}
 
     const firstButton = levels.querySelector('.level');
     if (firstButton) {
@@ -219,15 +234,12 @@ export const createElements = () => {
     createLevelInterface();
   });
 
-  const createTimer = () => {
-    const timer = document.createElement('span');
-    timer.classList.add('timer');
-    timer.textContent = '00 : 00';
+  createTimer();
 
-    containerTimer.appendChild(timer);
-  }
-
-  createTimer()
+	const gameField = document.querySelector(".game__board");
+	gameField.addEventListener("click", () => {
+		startTimer();
+	})
 
   const drawHints = board => {
     leftHints.innerHTML = ''
@@ -299,18 +311,20 @@ export const createElements = () => {
     topHints.classList.add(sizeClass)
   }
 
-  const colorCells = (board) => {
+  const colorCells = (sample) => {
     const cells = document.querySelectorAll('.cell');
-
-    cells.forEach((cell, index) => {
-      const row = Math.floor(index / board.length);
-      const col = index % board.length;
-
-      if (board[row] && board[row][col] === 1) {
-        cell.classList.add('color-cell');
-      } else {
-        cell.classList.remove('color-cell');
-      }
+    sample.forEach((row, rowIndex) => {
+      row.forEach((cellValue, colIndex) => {
+        const cellIndex = rowIndex * sample[0].length + colIndex;
+        const cell = cells[cellIndex];
+        if (cellValue === 1) {
+          cell.style.backgroundColor = 'black';
+          cell.style.boxShadow = 'inset 0 0 0 1px #ffffff';
+        } else {
+          cell.style.backgroundColor = 'white';
+          cell.style.boxShadow = 'none';
+        }
+      });
     });
   };
 
@@ -318,12 +332,12 @@ export const createElements = () => {
     gameBoard.innerHTML = '';
     const gridSize = board.length;
 
-    console.log(`Drawing board with size: ${gridSize}`);
-
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
+
+        cell.addEventListener('contextmenu', (event) => handleRightClick(event, cell));
 
         if ((col + 1) % 5 === 0 && col !== gridSize - 1) {
           cell.classList.add('border-right');
@@ -332,8 +346,20 @@ export const createElements = () => {
           cell.classList.add('border-bottom');
         }
 
+      cell.addEventListener("click", () => {
+				if (cell.style.backgroundColor === "black") {
+					cell.style.backgroundColor = "white"
+					cell.style.boxShadow = "none"
+				} else {
+					cell.style.backgroundColor = "black"
+					cell.style.boxShadow = "inset 0 0 0 1px #ffffff"
+				}
+        checkWin()
+			}) 
         gameBoard.appendChild(cell);
       }
     }
   };
+
+  
 }
