@@ -33,3 +33,11 @@ export const startTimer = () => {
 export const stopTimer = () => {
   clearInterval(timerInterval);
 };
+
+export const resetTimer = () => {
+  const timer = document.querySelector(".timer");
+  if (timer) {
+    timer.textContent = "00 : 00";
+  }
+  stopTimer();
+};

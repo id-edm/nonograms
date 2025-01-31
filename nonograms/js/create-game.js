@@ -4,6 +4,7 @@ import { createSvgBestGame } from './create-svg.js';
 import { checkWin } from './win-game.js';
 import { handleRightClick } from './click-right.js';
 import { clearCrosses } from './clear-crosses.js';
+import { resetGame } from './reset-game.js';
 import { createTimer, startTimer } from './create-timer.js';
 import { nanogramsSamples } from './level-samples.js';
 
@@ -122,6 +123,11 @@ export const createElements = () => {
       button.classList.add('button', 'btn-reset', uniqueClass);
       userBtn.appendChild(button);
     });
+
+    const resetBtn = document.querySelector(".reset-game")
+		if (resetBtn) {
+			resetBtn.addEventListener("click", resetGame)
+		}
 
     const showSampleBtn = document.querySelector(".solutions")
 		if (showSampleBtn) {
