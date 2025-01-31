@@ -1,4 +1,6 @@
 import { createColorSwitch } from './color-switch.js';
+import { createSvgSound } from './create-svg.js';
+import { createSvgBestGame } from './create-svg.js';
 import { nanogramsSamples } from './level-samples.js';
 
 
@@ -19,7 +21,10 @@ export const createElements = () => {
   uiSettings.classList.add('ui__settings');
   containerApp.appendChild(uiSettings);
 
+  
+	uiSettings.appendChild(createSvgSound())
   uiSettings.appendChild(createColorSwitch());
+  uiSettings.appendChild(createSvgBestGame())
 
   const containerSettings = document.createElement('div');
   containerSettings.classList.add('container__settings');
