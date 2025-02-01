@@ -5,7 +5,7 @@ import { checkWin } from './win-game.js';
 import { handleRightClick } from './click-right.js';
 import { clearCrosses } from './clear-crosses.js';
 import { resetGame } from './reset-game.js';
-import { createTimer, startTimer } from './create-timer.js';
+import { createTimer, startTimer, resetTimer } from './create-timer.js';
 import { nanogramsSamples } from './level-samples.js';
 
 
@@ -129,17 +129,19 @@ export const createElements = () => {
 			resetBtn.addEventListener("click", resetGame)
 		}
 
-    const showSampleBtn = document.querySelector(".solutions")
-		if (showSampleBtn) {
-			showSampleBtn.addEventListener("click", () => {
+    const solutions = document.querySelector(".solutions")
+		if (solutions) {
+			solutions.addEventListener("click", () => {
 				const cells = document.querySelectorAll(".cell")
 
 				cells.forEach(cell => {
 					cell.style.backgroundColor = "white"
 					cell.style.boxShadow = "none"
+
 				})
 
         clearCrosses();
+        resetTimer()
 
 				const selectedLevel =
 					document.querySelector(".level.active")?.dataset.level
@@ -172,6 +174,7 @@ export const createElements = () => {
 
         updateSamples(levelsMap[currentLevel]);
       }
+      resetTimer();
     });
 
     const updateSamples = (nanogramsSamples) => {
@@ -229,6 +232,7 @@ export const createElements = () => {
             drawBoard(sample);
             drawHints(sample);
           }
+          resetTimer();
         }
       });
     };

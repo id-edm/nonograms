@@ -1,4 +1,5 @@
 import { resetTimer } from './create-timer.js';
+import { boardDisable } from './board-disabled.js';
 
 export const resetGame = () => {
   const cells = document.querySelectorAll('.cell');
@@ -9,5 +10,6 @@ export const resetGame = () => {
     cell.textContent = '';
   });
 	resetTimer();
+	boardDisable(false)
 };
 
