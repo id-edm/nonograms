@@ -114,3 +114,16 @@ body {
   font-weight: bold;
   text-align: center;
 }
+
+.locked {
+  pointer-events: none;
+  /* Блокируем взаимодействие с клетками */
+}
+
+.cell.locked {
+  pointer-events: none;
+  background-color: white !important;
+  /* Убираем любые изменения цвета */
+  box-shadow: none !important;
+  /* Убираем любые стили */
+}

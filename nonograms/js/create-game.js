@@ -5,7 +5,7 @@ import { checkWin } from './win-game.js';
 import { handleRightClick } from './click-right.js';
 import { clearCrosses } from './clear-crosses.js';
 import { resetGame } from './reset-game.js';
-import { createTimer, startTimer, resetTimer } from './create-timer.js';
+import { createTimer, startTimer, resetTimer, stopTimer } from './create-timer.js';
 import { nanogramsSamples } from './level-samples.js';
 
 
@@ -26,7 +26,7 @@ export const createElements = () => {
   uiSettings.classList.add('ui__settings');
   containerApp.appendChild(uiSettings);
 
-  
+
 	uiSettings.appendChild(createSvgSound())
   uiSettings.appendChild(createColorSwitch());
   uiSettings.appendChild(createSvgBestGame())
@@ -130,18 +130,13 @@ export const createElements = () => {
 		}
 
     const solutions = document.querySelector(".solutions")
-		if (solutions) {
-			solutions.addEventListener("click", () => {
-				const cells = document.querySelectorAll(".cell")
+    if (solutions) {
+      solutions.addEventListener("click", () => {
 
-				cells.forEach(cell => {
-					cell.style.backgroundColor = "white"
-					cell.style.boxShadow = "none"
-
-				})
+        gameBoard.classList.add('locked');
 
         clearCrosses();
-        resetTimer()
+        stopTimer();
 
 				const selectedLevel =
 					document.querySelector(".level.active")?.dataset.level
@@ -342,6 +337,9 @@ export const createElements = () => {
     gameBoard.innerHTML = '';
     const gridSize = board.length;
 
+    // Проверяем, есть ли активная блокировка клеток
+    const isLocked = document.body.classList.contains('locked');
+
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
         const cell = document.createElement('div');
@@ -356,20 +354,23 @@ export const createElements = () => {
           cell.classList.add('border-bottom');
         }
 
-      cell.addEventListener("click", () => {
-				if (cell.style.backgroundColor === "black") {
-					cell.style.backgroundColor = "white"
-					cell.style.boxShadow = "none"
-				} else {
-					cell.style.backgroundColor = "black"
-					cell.style.boxShadow = "inset 0 0 0 1px #ffffff"
-				}
-        checkWin()
-			}) 
+        // Добавляем обработчик клика, но только если клетки не заблокированы
+        if (!isLocked) {
+          cell.addEventListener("click", () => {
+            if (cell.style.backgroundColor === "black") {
+              cell.style.backgroundColor = "white";
+              cell.style.boxShadow = "none";
+            } else {
+              cell.style.backgroundColor = "black";
+              cell.style.boxShadow = "inset 0 0 0 1px #ffffff";
+            }
+            checkWin();
+          });
+        }
+
         gameBoard.appendChild(cell);
       }
     }
   };
 
-  
 }
