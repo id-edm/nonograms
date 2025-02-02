@@ -1,5 +1,6 @@
 
 import { createSvgCross } from './create-svg.js';
+import { playSound } from './sounds.js';
 
 export const handleRightClick = (event, cell) => {
   event.preventDefault();
@@ -8,9 +9,11 @@ export const handleRightClick = (event, cell) => {
     const existingSvg = cell.querySelector('svg');
     if (existingSvg) {
       cell.removeChild(existingSvg);
+      playSound('cross');
     } else {
       const svgCross = createSvgCross();
       cell.appendChild(svgCross);
+      playSound('cross');
     }
   }
 };

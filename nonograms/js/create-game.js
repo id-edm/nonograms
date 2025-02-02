@@ -5,6 +5,7 @@ import { checkWin } from './win-game.js';
 import { handleRightClick } from './click-right.js';
 import { clearCrosses } from './clear-crosses.js';
 import { resetGame } from './reset-game.js';
+import { playSound } from './sounds.js';
 import { createTimer, startTimer, resetTimer, stopTimer } from './create-timer.js';
 import { nanogramsSamples } from './level-samples.js';
 
@@ -170,6 +171,8 @@ export const createElements = () => {
         updateSamples(levelsMap[currentLevel]);
       }
       resetTimer();
+      resetGame();
+      playSound('click-btn');
     });
 
     const updateSamples = (nanogramsSamples) => {
@@ -228,6 +231,7 @@ export const createElements = () => {
             drawHints(sample);
           }
           resetTimer();
+          resetGame();
         }
       });
     };
@@ -337,7 +341,6 @@ export const createElements = () => {
     gameBoard.innerHTML = '';
     const gridSize = board.length;
 
-    // Проверяем, есть ли активная блокировка клеток
     const isLocked = document.body.classList.contains('locked');
 
     for (let row = 0; row < gridSize; row++) {
@@ -354,15 +357,16 @@ export const createElements = () => {
           cell.classList.add('border-bottom');
         }
 
-        // Добавляем обработчик клика, но только если клетки не заблокированы
         if (!isLocked) {
           cell.addEventListener("click", () => {
             if (cell.style.backgroundColor === "black") {
               cell.style.backgroundColor = "white";
               cell.style.boxShadow = "none";
+              playSound('clear')
             } else {
               cell.style.backgroundColor = "black";
               cell.style.boxShadow = "inset 0 0 0 1px #ffffff";
+              playSound('pencil')
             }
             checkWin();
           });

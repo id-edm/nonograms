@@ -1,6 +1,7 @@
 import { nanogramsSamples } from "./level-samples.js"
 import { boardDisable } from "./board-disabled.js"
 import { stopTimer } from "./create-timer.js"
+import { playSound } from './sounds.js';
 
 export const checkWin = () => {
 	const cells = document.querySelectorAll(".cell")
@@ -33,6 +34,7 @@ export const checkWin = () => {
 		console.log("Отлично! Вы решили нонограмму!")
 
 		stopTimer()
+		playSound('you-win');
 
 		const modal = document.createElement("div")
 		modal.classList.add("modal")
