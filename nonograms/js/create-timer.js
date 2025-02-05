@@ -1,3 +1,9 @@
+export let totalTime = 0;
+
+export const setTotalTime = (time) => {
+  totalTime = time;
+};
+
 export const createTimer = () => {
 	const timer = document.createElement("span")
 	timer.classList.add("timer")
@@ -14,7 +20,7 @@ let timerStarted = false;
 
 export const startTimer = () => {
 	const timer = document.querySelector(".timer");
-	let seconds = 0;
+	let seconds = totalTime;
 
 	if (timer && !timerStarted) {
 		timerStarted = true;
@@ -22,6 +28,7 @@ export const startTimer = () => {
 		clearInterval(timerInterval);
 		timerInterval = setInterval(() => {
 			seconds++;
+			totalTime = seconds;
 			const minutes = Math.floor(seconds / 60);
 			const remainingSeconds = seconds % 60;
 

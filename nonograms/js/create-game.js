@@ -1,14 +1,23 @@
 import { createColorSwitch } from './color-switch.js';
-import { createSvgSound } from './create-svg.js';
+import { createSvgSound, createSvgCross } from './create-svg.js';
 import { createSvgBestGame } from './create-svg.js';
 import { checkWin } from './win-game.js';
-import { handleRightClick } from './click-right.js';
 import { clearCrosses } from './clear-crosses.js';
-import { resetGame } from './reset-game.js';
+import { boardDisable } from './board-disabled.js';
 import { playSound } from './sounds.js';
+import { totalTime, setTotalTime } from "./create-timer.js";
 import { createTimer, startTimer, resetTimer, stopTimer } from './create-timer.js';
 import { nanogramsSamples } from './level-samples.js';
 
+let currentLevel = 'easy';
+let currentSample = ''
+let currentBoard = [];
+window.currentBoard = currentBoard;
+const levelsMap = {
+  easy: nanogramsSamples.easy,
+  medium: nanogramsSamples.medium,
+  hard: nanogramsSamples.hard,
+};
 
 export const createElements = () => {
   const containerApp = document.createElement('div');
@@ -28,7 +37,7 @@ export const createElements = () => {
   containerApp.appendChild(uiSettings);
 
 
-	uiSettings.appendChild(createSvgSound())
+  uiSettings.appendChild(createSvgSound())
   uiSettings.appendChild(createColorSwitch());
   uiSettings.appendChild(createSvgBestGame())
 
@@ -99,12 +108,6 @@ export const createElements = () => {
   const createLevelInterface = () => {
     const levels = document.querySelector('.levels');
     const levelValues = ['Easy', 'Medium', 'Hard'];
-    let currentLevel = 'easy';
-    const levelsMap = {
-      easy: nanogramsSamples.easy,
-      medium: nanogramsSamples.medium,
-      hard: nanogramsSamples.hard,
-    };
 
     levelValues.forEach((value) => {
       const button = document.createElement('button');
@@ -115,7 +118,7 @@ export const createElements = () => {
     });
 
     const userBtn = document.querySelector('.container__control');
-    const btnValues = ['Save game', 'Solutions', 'Reset game', 'Continue last game'];
+    const btnValues = ['Save game', 'Solutions', 'Reset game', 'Continue last game', 'random game'];
 
     btnValues.forEach((value) => {
       const button = document.createElement('button');
@@ -126,9 +129,36 @@ export const createElements = () => {
     });
 
     const resetBtn = document.querySelector(".reset-game")
-		if (resetBtn) {
-			resetBtn.addEventListener("click", resetGame)
-		}
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        resetGame();
+      });
+    }
+
+    const randomGameBtn = document.querySelector(".random-game")
+    if (randomGameBtn) {
+      randomGameBtn.addEventListener('click', () => {
+        loadRandomLevelAndSample();
+      });
+    }
+
+    const loadButton = document.querySelector('.continue-last-game');
+    if (loadButton) {
+      loadButton.addEventListener('click', () => {
+        if (gameBoard) {
+          gameBoard.classList.remove('locked');
+          loadBoardGame();
+          updateSamples(levelsMap[currentLevel]);
+        }
+      });
+    }
+
+    const saveButton = document.querySelector('.save-game');
+    if (saveButton) {
+      saveButton.addEventListener('click', (event) => {
+        saveGame(event);
+      });
+    }
 
     const solutions = document.querySelector(".solutions")
     if (solutions) {
@@ -139,20 +169,20 @@ export const createElements = () => {
         clearCrosses();
         stopTimer();
 
-				const selectedLevel =
-					document.querySelector(".level.active")?.dataset.level
-				const selectedSample = document.querySelector(".sample.active")
-				if (selectedSample) {
-					const sampleId = selectedSample.dataset.sampleId
-					const sample = nanogramsSamples[selectedLevel]?.[sampleId]
-					if (!sample) {
-						return
-					}
+        const selectedLevel =
+          document.querySelector(".level.active")?.dataset.level
+        const selectedSample = document.querySelector(".sample.active")
+        if (selectedSample) {
+          const sampleId = selectedSample.dataset.sampleId
+          const sample = nanogramsSamples[selectedLevel]?.[sampleId]
+          if (!sample) {
+            return
+          }
 
-					colorCells(sample)
-				}
-			})
-		}
+          colorCells(sample)
+        }
+      })
+    }
 
     const firstButton = levels.querySelector('.level');
     if (firstButton) {
@@ -160,6 +190,7 @@ export const createElements = () => {
     }
 
     levels.addEventListener('click', (event) => {
+      currentBoard = [];
       const target = event.target;
 
       if (target.classList.contains('level')) {
@@ -167,12 +198,11 @@ export const createElements = () => {
 
         target.classList.add('active');
         currentLevel = target.dataset.level;
-
+        switchLevel(currentLevel);
         updateSamples(levelsMap[currentLevel]);
       }
       resetTimer();
       resetGame();
-      playSound('click-btn');
     });
 
     const updateSamples = (nanogramsSamples) => {
@@ -212,6 +242,7 @@ export const createElements = () => {
 
       if (firstSample) {
         const sample = nanogramsSamples[firstSample];
+        currentSample = sample;
         drawBoard(sample);
         drawHints(sample);
       }
@@ -225,8 +256,10 @@ export const createElements = () => {
           target.classList.add('active');
           const sampleId = target.dataset.sampleId;
           const sample = nanogramsSamples[sampleId];
+          currentSample = sample;
 
           if (sample) {
+
             drawBoard(sample);
             drawHints(sample);
           }
@@ -245,10 +278,10 @@ export const createElements = () => {
 
   createTimer();
 
-	const gameField = document.querySelector(".game__board");
-	gameField.addEventListener("click", () => {
-		startTimer();
-	})
+  const gameField = document.querySelector(".game__board");
+  gameField.addEventListener("click", () => {
+    startTimer();
+  })
 
   const drawHints = board => {
     leftHints.innerHTML = ''
@@ -337,18 +370,53 @@ export const createElements = () => {
     });
   };
 
+  const updateBoardState = (row, col, value) => {
+    currentBoard[row][col] = value;
+  };
+
   const drawBoard = (board) => {
     gameBoard.innerHTML = '';
     const gridSize = board.length;
 
     const isLocked = document.body.classList.contains('locked');
 
+    if (currentBoard.length === 0) {
+      for (let i = 0; i < gridSize; i++) {
+        currentBoard[i] = [];
+        for (let j = 0; j < gridSize; j++) {
+          currentBoard[i][j] = 0;
+        }
+      }
+    }
+
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
+        cell.dataset.row = row;
+        cell.dataset.col = col;
 
-        cell.addEventListener('contextmenu', (event) => handleRightClick(event, cell));
+        cell.addEventListener('contextmenu', (event) => {
+          event.preventDefault();
+
+          const existingSvg = cell.querySelector('svg');
+
+          if (currentBoard[row][col] === 2) {
+            updateBoardState(row, col, 0);
+            if (existingSvg) {
+              cell.removeChild(existingSvg);
+            }
+            cell.style.backgroundColor = "white";
+            playSound('clear');
+          } else if (currentBoard[row][col] === 0 || currentBoard[row][col] === 1) {
+            cell.style.backgroundColor = "white";
+            updateBoardState(row, col, 2);
+            const svgCross = createSvgCross();
+            cell.appendChild(svgCross);
+            playSound('pencil');
+          }
+        });
+
 
         if ((col + 1) % 5 === 0 && col !== gridSize - 1) {
           cell.classList.add('border-right');
@@ -357,16 +425,32 @@ export const createElements = () => {
           cell.classList.add('border-bottom');
         }
 
+        if (currentBoard[row][col] === 1) {
+          cell.style.backgroundColor = 'black';
+          cell.style.boxShadow = 'inset 0 0 0 1px #ffffff';
+        } else if (currentBoard[row][col] === 2) {
+          cell.style.backgroundColor = 'white';
+          cell.style.boxShadow = 'none';
+          const svgCross = createSvgCross();
+          cell.appendChild(svgCross);
+        }
+
         if (!isLocked) {
           cell.addEventListener("click", () => {
-            if (cell.style.backgroundColor === "black") {
+            if (currentBoard[row][col] === 1) {
+              updateBoardState(row, col, 0);
               cell.style.backgroundColor = "white";
               cell.style.boxShadow = "none";
-              playSound('clear')
+              playSound('clear');
             } else {
+              updateBoardState(row, col, 1);
               cell.style.backgroundColor = "black";
               cell.style.boxShadow = "inset 0 0 0 1px #ffffff";
-              playSound('pencil')
+              const existingSvg = cell.querySelector('svg');
+              if (existingSvg) {
+                cell.removeChild(existingSvg);
+              }
+              playSound('pencil');
             }
             checkWin();
           });
@@ -377,4 +461,197 @@ export const createElements = () => {
     }
   };
 
+  const switchLevel = (level) => {
+    if (level === currentLevel) return;
+
+    currentLevel = level;
+    updateGameGrid(level);
+    resetTimer();
+
+    document.querySelectorAll('.level-button').forEach((button) => {
+      button.classList.remove('active');
+      if (button.dataset.level === level) {
+        button.classList.add('active');
+      }
+    });
+
+    drawBoard(levelsMap[level]);
+    drawHints(levelsMap[level]);
+  };
+
+  const loadBoardGame = () => {
+    const savedState = localStorage.getItem('lastGame');
+
+    if (savedState) {
+      const gameState = JSON.parse(savedState);
+
+      currentBoard = gameState.boardState.map(row => [...row]);
+      setTotalTime(gameState.time);
+      const savedLevel = gameState.levelState;
+
+      if (savedLevel !== currentLevel) {
+        currentLevel = savedLevel;
+        updateGameGrid(savedLevel);
+        resetTimer();
+      }
+
+      setTimeout(() => {
+        document.querySelectorAll('.level').forEach((button) => {
+          button.classList.remove('active');
+          if (button.dataset.level === savedLevel) {
+            button.classList.add('active');
+          }
+        });
+      }, 5);
+
+      const savedSampleName = gameState.sampleName;
+
+      if (savedSampleName !== currentSample) {
+        currentSample = savedSampleName;
+        resetTimer();
+      }
+
+      setTimeout(() => {
+        document.querySelectorAll('.sample').forEach((button) => {
+          button.classList.remove('active');
+          if (button.dataset.sampleId === savedSampleName) {
+            button.classList.add('active');
+          }
+        });
+      }, 5);
+
+      currentSample = savedSampleName;
+
+      drawBoard(currentBoard);
+      drawHints(nanogramsSamples[currentLevel][currentSample]);
+
+      const timer = document.querySelector(".timer");
+      const seconds = gameState.time;
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+
+      if (timer) {
+        timer.textContent = `${minutes.toString().padStart(2, "0")} : ${remainingSeconds.toString().padStart(2, "0")}`;
+      }
+      startTimer();
+    }
+  };
+
+  const updateSampleButtons = (level) => {
+    const samplesContainer = document.querySelector('.samples');
+    const sampleButtons = samplesContainer.querySelectorAll('.sample');
+
+    const samples = Object.keys(nanogramsSamples[level]);
+    sampleButtons.forEach((button, index) => {
+      if (samples[index]) {
+        button.textContent = samples[index].toUpperCase();
+        button.dataset.sampleId = samples[index];
+      } else {
+        button.remove();
+      }
+    });
+
+    samples.slice(sampleButtons.length).forEach(sample => {
+      const button = document.createElement('button');
+      button.classList.add('sample');
+      button.dataset.sampleId = sample;
+      button.textContent = sample
+      samplesContainer.appendChild(button);
+    });
+  };
+
+  const loadRandomLevelAndSample = () => {
+    const levels = Object.keys(nanogramsSamples);
+    const randomLevel = levels[Math.floor(Math.random() * levels.length)];
+
+    const samples = Object.keys(nanogramsSamples[randomLevel]);
+    const randomSample = samples[Math.floor(Math.random() * samples.length)];
+
+    currentLevel = randomLevel;
+    currentSample = randomSample;
+    const sampleMatrix = nanogramsSamples[currentLevel][currentSample];
+    currentBoard = sampleMatrix.map(row => row.map(() => 0));
+
+    updateGameGrid(currentLevel);
+    updateSampleButtons(currentLevel);
+
+    drawBoard(currentBoard);
+    drawHints(sampleMatrix);
+
+    document.querySelectorAll('.level').forEach(button => {
+      button.classList.remove('active');
+      if (button.dataset.level === randomLevel) {
+        button.classList.add('active');
+      }
+    });
+
+    document.querySelectorAll('.sample').forEach(button => {
+      button.classList.remove('active');
+      if (button.dataset.sampleId.trim() === currentSample.trim()) {
+        button.classList.add('active');
+      }
+    });
+
+    resetTimer();
+    startTimer();
+  };
+
+
+  const updateGameGrid = (currentLeve) => {
+    const gameContainer = document.querySelector('.game__board');
+
+    if (gameContainer) {
+      switch (currentLeve) {
+        case 'easy':
+          gameContainer.style.gridTemplateColumns = 'repeat(5, 30px)';
+          gameContainer.style.gridTemplateRows = 'repeat(5, 30px)';
+          break;
+        case 'medium':
+          gameContainer.style.gridTemplateColumns = 'repeat(10, 25px)';
+          gameContainer.style.gridTemplateRows = 'repeat(10, 25px)';
+          break;
+        case 'hard':
+          gameContainer.style.gridTemplateColumns = 'repeat(15, 20px)';
+          gameContainer.style.gridTemplateRows = 'repeat(15, 20px)';
+          break;
+        default:
+      }
+    }
+  };
+
+  const saveGame = () => {
+    const gameState = {
+      boardState: currentBoard,
+      levelState: currentLevel,
+      time: totalTime,
+      sampleState: currentSample,
+      sampleName: getSampleName(currentLevel, currentSample)
+    };
+    localStorage.setItem('lastGame', JSON.stringify(gameState));
+  };
+
+  function getSampleName(level, sampleArray) {
+    const levelSamples = nanogramsSamples[level];
+
+    for (let name in levelSamples) {
+      if (JSON.stringify(levelSamples[name]) === JSON.stringify(sampleArray)) {
+        return name;
+      }
+    }
+    return null;
+  }
+
+  const resetGame = () => {
+    const cells = document.querySelectorAll('.cell');
+
+    currentBoard = currentBoard.map(row => row.map(cell => 0));
+
+    cells.forEach((cell, index) => {
+      cell.style.backgroundColor = '';
+      cell.style.boxShadow = '';
+      cell.textContent = '';
+    });
+    resetTimer();
+    boardDisable(false);
+  };
 }
