@@ -1,19 +1,19 @@
 export let totalTime = 0;
 
 export const setTotalTime = (time) => {
-  totalTime = time;
+	totalTime = time;
 };
 
 export const createTimer = () => {
-	const timer = document.createElement("span")
-	timer.classList.add("timer")
-	timer.textContent = "00 : 00"
+	const timer = document.createElement("span");
+	timer.classList.add("timer");
+	timer.textContent = "00 : 00";
 
-	const containerTimer = document.querySelector(".container__timer")
-	containerTimer.appendChild(timer)
+	const containerTimer = document.querySelector(".container__timer");
+	containerTimer.appendChild(timer);
 
-	return timer
-}
+	return timer;
+};
 
 let timerInterval;
 let timerStarted = false;
@@ -38,14 +38,22 @@ export const startTimer = () => {
 };
 
 export const stopTimer = () => {
-  clearInterval(timerInterval);
+	clearInterval(timerInterval);
 };
 
 export const resetTimer = () => {
-  clearInterval(timerInterval);
-  timerStarted = false;
-  const timer = document.querySelector(".timer");
-  if (timer) {
-    timer.textContent = "00 : 00";
-  }
+	clearInterval(timerInterval);
+	timerStarted = false;
+	totalTime = 0;
+	const timer = document.querySelector(".timer");
+	if (timer) {
+		timer.textContent = "00 : 00";
+	}
+};
+
+
+export const startNewGame = () => {
+	resetTimer();
+	totalTime = 0;
+	startTimer();
 };

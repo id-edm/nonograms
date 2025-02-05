@@ -31,10 +31,9 @@ export const checkWin = () => {
 	})
 
 	if (isSolved) {
-		console.log("Отлично! Вы решили нонограмму!")
-
 		stopTimer()
 		playSound('you-win');
+		saveGame()
 
 		const modal = document.createElement("div")
 		modal.classList.add("modal")

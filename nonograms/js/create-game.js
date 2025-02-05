@@ -5,7 +5,7 @@ import { checkWin } from './win-game.js';
 import { clearCrosses } from './clear-crosses.js';
 import { boardDisable } from './board-disabled.js';
 import { playSound } from './sounds.js';
-import { totalTime, setTotalTime } from "./create-timer.js";
+import { totalTime, setTotalTime, startNewGame } from "./create-timer.js";
 import { createTimer, startTimer, resetTimer, stopTimer } from './create-timer.js';
 import { nanogramsSamples } from './level-samples.js';
 
@@ -147,6 +147,8 @@ export const createElements = () => {
       loadButton.addEventListener('click', () => {
         if (gameBoard) {
           gameBoard.classList.remove('locked');
+          setTotalTime(gameState.time);
+          stopTimer()
           loadBoardGame();
           updateSamples(levelsMap[currentLevel]);
         }
@@ -201,6 +203,7 @@ export const createElements = () => {
         switchLevel(currentLevel);
         updateSamples(levelsMap[currentLevel]);
       }
+
       resetTimer();
       resetGame();
     });
@@ -466,7 +469,6 @@ export const createElements = () => {
 
     currentLevel = level;
     updateGameGrid(level);
-    resetTimer();
 
     document.querySelectorAll('.level-button').forEach((button) => {
       button.classList.remove('active');
@@ -492,7 +494,6 @@ export const createElements = () => {
       if (savedLevel !== currentLevel) {
         currentLevel = savedLevel;
         updateGameGrid(savedLevel);
-        resetTimer();
       }
 
       setTimeout(() => {
@@ -508,7 +509,6 @@ export const createElements = () => {
 
       if (savedSampleName !== currentSample) {
         currentSample = savedSampleName;
-        resetTimer();
       }
 
       setTimeout(() => {
@@ -591,11 +591,7 @@ export const createElements = () => {
         button.classList.add('active');
       }
     });
-
-    resetTimer();
-    startTimer();
   };
-
 
   const updateGameGrid = (currentLeve) => {
     const gameContainer = document.querySelector('.game__board');
@@ -620,6 +616,7 @@ export const createElements = () => {
   };
 
   const saveGame = () => {
+    const isWin = checkWinCondition();
     const gameState = {
       boardState: currentBoard,
       levelState: currentLevel,
@@ -627,8 +624,19 @@ export const createElements = () => {
       sampleState: currentSample,
       sampleName: getSampleName(currentLevel, currentSample)
     };
+
+    window.gameState = gameState;
+
     localStorage.setItem('lastGame', JSON.stringify(gameState));
+
+    if (isWin) {
+      addToResults(gameState);
+    }
   };
+
+  function checkWinCondition() {
+    return JSON.stringify(currentBoard) === JSON.stringify(currentSample);
+  }
 
   function getSampleName(level, sampleArray) {
     const levelSamples = nanogramsSamples[level];
@@ -640,6 +648,120 @@ export const createElements = () => {
     }
     return null;
   }
+
+  window.saveGame = saveGame;
+
+  function addToResults(gameState) {
+    let results = JSON.parse(localStorage.getItem('gameResults')) || [];
+
+    results.push(gameState);
+
+    results.sort((a, b) => a.time - b.time);
+
+    if (results.length > 5) {
+      results = results.slice(0, 5);
+    }
+
+    localStorage.setItem('gameResults', JSON.stringify(results));
+  }
+
+  function getSampleName(level, sampleArray) {
+    const levelSamples = nanogramsSamples[level];
+
+    for (let name in levelSamples) {
+      if (JSON.stringify(levelSamples[name]) === JSON.stringify(sampleArray)) {
+        return name;
+      }
+    }
+    return null;
+  }
+
+  const createResultsTable = () => {
+    document.querySelector(".star__icon").addEventListener("click", () => {
+      const modal = document.createElement("div");
+      modal.classList.add("modal");
+
+      const modalContent = document.createElement("div");
+      modalContent.classList.add("modal__content");
+
+      const modalTitle = document.createElement("h2");
+      modalTitle.classList.add("modal__title");
+      modalTitle.textContent = "Last 5 wins 🏆";
+      modalContent.appendChild(modalTitle);
+
+      const table = document.createElement("table");
+      table.classList.add("results__table");
+
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+
+      const timeHeader = document.createElement("th");
+      timeHeader.textContent = "Level";
+      headerRow.appendChild(timeHeader);
+
+      const levelHeader = document.createElement("th");
+      levelHeader.textContent = "Sample";
+      headerRow.appendChild(levelHeader);
+
+      const movesHeader = document.createElement("th");
+      movesHeader.textContent = "Time";
+      headerRow.appendChild(movesHeader);
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      tbody.id = "resultsTable";
+
+      const savedData = localStorage.getItem("gameResults");
+
+      if (savedData) {
+        const results = JSON.parse(savedData);
+
+        results.forEach(result => {
+          const row = document.createElement("tr");
+
+          const levelCell = document.createElement("td");
+          levelCell.textContent = result.levelState.toUpperCase();
+          row.appendChild(levelCell);
+
+          const sampleCell = document.createElement("td");
+          sampleCell.textContent = result.sampleName.toUpperCase();
+          row.appendChild(sampleCell);
+
+          const formatTime = (seconds) => {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')} sec`;
+          };
+
+          const timeCell = document.createElement("td");
+          timeCell.textContent = formatTime(result.time);
+          row.appendChild(timeCell);
+
+          tbody.appendChild(row);
+        });
+      }
+
+      table.appendChild(tbody);
+      modalContent.appendChild(table);
+
+      const closeButton = document.createElement("button");
+      closeButton.classList.add("button", "close__modal");
+      closeButton.textContent = "Close";
+      closeButton.addEventListener("click", () => {
+        modal.remove();
+      });
+
+      modalContent.appendChild(closeButton);
+      modal.appendChild(modalContent);
+      document.body.appendChild(modal);
+    });
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    createResultsTable();
+  });
 
   const resetGame = () => {
     const cells = document.querySelectorAll('.cell');
