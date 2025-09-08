@@ -1,0 +1,124 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+@font-face {
+  font-family: Jersey;
+  src: url('../assets/fonts/Jersey.ttf');
+}
+
+@font-face {
+  font-family: Playwrite;
+  src: url('../assets/fonts/Playwrite.ttf');
+}
+
+@font-face {
+  font-family: Titillium;
+  src: url('../assets/fonts/Titillium.ttf');
+}
+
+.btn-reset {
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+body {
+  background-color: #e6dddd;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items:flex-start;
+  padding: 30px;
+  font-family: Monocraft;
+  user-select: none;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.container__app {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* position: relative; */
+  top: 0;
+  right: 0;
+}
+
+.container__title {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.ui__settings {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.title {
+  font-family: Playwrite;
+  color: #648703;
+  font-size: 40px;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0, 128, 0, 0.4);
+}
+
+.container__settings {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.container__samples,
+.container__levels {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.subtitle {
+  font-family: Playwrite;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.samples,
+.levels {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.container__timer {
+  display: flex;
+  justify-content: center;
+}
+
+.timer {
+  font-family: Titillium;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.locked {
+  pointer-events: none;
+}
+
+.muted {
+  opacity: 0.5;
+}

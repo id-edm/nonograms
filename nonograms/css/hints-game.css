@@ -1,0 +1,100 @@
+.wrapper__hints-left {
+  display: flex;
+  align-items: flex-end;
+  background-color: rgb(152, 189, 189);
+}
+
+.wrapper__hints-right {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(152, 189, 189);
+}
+
+.hints {
+  display: flex;
+  font-family: Titillium;
+}
+
+.hints-left {
+  flex-direction: column;
+  align-items: flex-end;
+  width: auto;
+  box-shadow: inset 0 0 0 3px #000000;
+}
+
+.hints-top {
+  box-shadow: inset 0 0 0 3px #000000;
+}
+
+.hint-row {
+  display: flex;
+}
+
+.hint-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.hint-cell {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hard-hints .hint-cell {
+  width: 20px;
+  height: 20px;
+  font-size: 8px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.medium-hints .hint-cell {
+  width: 25px;
+  height: 25px;
+  font-size: 12px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hint-row, .hint-col {
+  display: flex;
+  gap: 2px;
+}
+
+.hint-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+
+}
+
+.hint-col {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.cell {
+  cursor: pointer;
+}
+
+.cell.color-cell {
+  background-color: #000000;
+  box-shadow: inset 0 0 0 1px #ffffff;
+}
+
+.hint-row:not(:last-child) {
+  box-shadow: inset 0 -3px 0 0 #000000;
+}
+
+.hint-col:not(:last-child) {
+  box-shadow: inset -3px 0 0 0 #000000;
+}

@@ -1,0 +1,13 @@
+.icon {
+  cursor: pointer;
+  fill: #2f4d6d;
+  transition: fill 0.2s ease;
+}
+
+.icon:hover {
+  cursor: pointer;
+  fill: #c0971a;
+}
+
+
+
